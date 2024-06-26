@@ -1,0 +1,291 @@
+package main;
+
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import dao.ThongTinGiaoHangDAO;
+import dao.XuLyThanhToanDAO;
+import dao.XuLyThongTinDonHangDAO;
+import entity.ThongTinGiaoHang;
+
+public class Main {
+	static ThongTinGiaoHangDAO thongTinGiaoHangDAO = new ThongTinGiaoHangDAO();
+	private static XuLyThongTinDonHangDAO xuLyThongTinDonHangDAO = new XuLyThongTinDonHangDAO();
+	private static XuLyThanhToanDAO xuLyThanhToanDAO = new XuLyThanhToanDAO();
+	private static Scanner sc = new Scanner(System.in);
+
+	public static void main(String[] args) {
+
+		while (true) {
+			System.out.println("------------------------------------------------------");
+			System.out.println("Menu chính: ");
+			System.out.println("1. Quản lý sinh viên (Shipper)");
+			System.out.println("2. Quản lý khách hàng (KH)");
+			System.out.println("3. Quản lý thông tin giao hàng");
+			System.out.println("4. Phê duyệt thông tin giao hàng");
+			System.out.println("5. Đăng ký và tìm kiếm giao hàng bởi shipper");
+			System.out.println("6. Quản lý chi tiết đơn hàng");
+			System.out.println("7. Xử lý thanh toán và báo cáo");
+			System.out.println("0. Thoát chương trình");
+			System.out.print("Nhập lựa chọn: ");
+			int choice = sc.nextInt();
+			sc.nextLine();
+			switch (choice) {
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				QuanLyThongTinGiaoHang();
+				break;
+			case 4:
+				xuLyThongTinDonHang();
+				break;
+			case 5:
+				break;
+			case 6:
+				break;
+			case 7:
+				xuLyThanhToan();
+				break;
+			case 0:
+				System.out.println("Bạn đã thoát chương trình!");
+				return;
+			default:
+				System.out.println("Chức năng không hợp lệ.");
+			}
+		}
+	}
+
+	private static void QuanLyThongTinGiaoHang() {
+		while (true) {
+			System.out.println("------------------------------------------------------");
+			System.out.println("1. Thêm thông tin giao hàng");
+			System.out.println("2. Cập nhật thông tin giao hàng");
+			System.out.println("3. Xóa thông tin giao hàng");
+			System.out.println("4. Xem tất cả thông tin giao hàng");
+			System.out.println("5. Liệt kê shipper nữ có ít nhất 1 đơn hàng trong tháng 2/2024");
+			System.out.println("6. Thoát");
+			System.out.print("Chọn một tùy chọn: ");
+			int choice = sc.nextInt();
+			sc.nextLine();
+			switch (choice) {
+			case 1:
+				insert();
+				break;
+			case 2:
+				update();
+				break;
+			case 3:
+				delete();
+				break;
+			case 4:
+				selectAll();
+				break;
+			case 5:
+				lietKeShipperNu();
+				break;
+			case 6:
+				System.out.println("Thoát chương trình.");
+				return;
+			default:
+				System.out.println("Tùy chọn không hợp lệ, vui lòng thử lại.");
+			}
+		}
+	}
+
+	private static void insert() {
+		ThongTinGiaoHang ghn = new ThongTinGiaoHang();
+		System.out.print("Nhập mã giao hàng: ");
+		ghn.setMaGiaoHang(sc.nextLine());
+		System.out.print("Nhập mã Shipper: ");
+		ghn.setMaShipper(sc.nextLine());
+		System.out.print("Nhập ngày giao hàng (YYYY-MM-DD): ");
+		ghn.setNgayGiaoHang(Date.valueOf(sc.nextLine()));
+		System.out.print("Nhập dịch vụ giao hàng: ");
+		ghn.setDichVuGiaoHang(sc.nextLine());
+		System.out.print("Nhập địa chỉ giao hàng: ");
+		ghn.setDiaChiGiaoHang(sc.nextLine());
+		System.out.print("Nhập tên người nhận: ");
+		ghn.setTenNguoiNhan(sc.nextLine());
+		System.out.print("Nhập số điện thoại: ");
+		ghn.setSoDienThoai(sc.nextLine());
+		System.out.print("Nhập phương thức thanh toán: ");
+		ghn.setPhuongThucThanhToan(sc.nextLine());
+		System.out.print("Nhập yêu cầu khác: ");
+		ghn.setYeuCauKhac(sc.nextLine());
+		System.out.print("Nhập trạng thái phê duyệt: ");
+		ghn.setTrangThaiPheDuyet(sc.nextLine());
+		System.out.print("Nhập trạng thái giao hàng: ");
+		ghn.setTrangThaiGiaoHang(sc.nextLine());
+		System.out.print("Nhập mã khách hàng: ");
+		ghn.setMaKH(sc.nextLine());
+		System.out.print("Nhập trọng lượng: ");
+		ghn.setTrongLuong(sc.nextFloat());
+		System.out.print("Nhập phí: ");
+		ghn.setPhi(sc.nextInt());
+		sc.nextLine();
+		thongTinGiaoHangDAO.insert(ghn);
+	}
+
+	private static void update() {
+		ThongTinGiaoHang ghn = new ThongTinGiaoHang();
+		System.out.print("Nhập mã giao hàng cần cập nhật: ");
+		ghn.setMaGiaoHang(sc.nextLine());
+		System.out.print("Nhập ngày giao hàng (YYYY-MM-DD): ");
+		ghn.setNgayGiaoHang(Date.valueOf(sc.nextLine()));
+		System.out.print("Nhập dịch vụ giao hàng: ");
+		ghn.setDichVuGiaoHang(sc.nextLine());
+		System.out.print("Nhập địa chỉ giao hàng: ");
+		ghn.setDiaChiGiaoHang(sc.nextLine());
+		System.out.print("Nhập tên người nhận: ");
+		ghn.setTenNguoiNhan(sc.nextLine());
+		System.out.print("Nhập số điện thoại: ");
+		ghn.setSoDienThoai(sc.nextLine());
+		System.out.print("Nhập phương thức thanh toán: ");
+		ghn.setPhuongThucThanhToan(sc.nextLine());
+		System.out.print("Nhập yêu cầu khác: ");
+		ghn.setYeuCauKhac(sc.nextLine());
+		System.out.print("Nhập trạng thái phê duyệt: ");
+		ghn.setTrangThaiPheDuyet(sc.nextLine());
+		System.out.print("Nhập trạng thái giao hàng: ");
+		ghn.setTrangThaiGiaoHang(sc.nextLine());
+		System.out.print("Nhập trọng lượng: ");
+		ghn.setTrongLuong(sc.nextFloat());
+		System.out.print("Nhập phí: ");
+		ghn.setPhi(sc.nextInt());
+		sc.nextLine();
+		thongTinGiaoHangDAO.update(ghn);
+	}
+
+	private static void delete() {
+		System.out.print("Nhập mã giao hàng cần xóa: ");
+		String maGiaoHang = sc.nextLine();
+		ThongTinGiaoHang ghn = new ThongTinGiaoHang();
+		ghn.setMaGiaoHang(maGiaoHang);
+		thongTinGiaoHangDAO.delete(ghn);
+	}
+
+	private static void selectAll() {
+		thongTinGiaoHangDAO.selectAll();
+	}
+
+	private static void lietKeShipperNu() {
+		List<String> nuShippers = thongTinGiaoHangDAO.lietKeShipperNu();
+		System.out.println("Danh sách shipper nữ có ít nhất 1 đơn hàng trong tháng 2/2024:");
+		for (String shipper : nuShippers) {
+			System.out.println(shipper);
+		}
+	}
+
+	private static void xuLyThongTinDonHang() {
+		while (true) {
+			System.out.println("------------------------------------------------------");
+			System.out.println("1. Lấy thông tin đơn hàng");
+			System.out.println("2. Phê duyệt thông tin đơn hàng");
+			System.out
+					.println("3. Liệt kê các shipper đã giao hàng cho các KH có địa chỉ ở TP Vinh trong tháng 4/2024");
+			System.out.println("0. Thoát chương trình");
+			int choice = sc.nextInt();
+			sc.nextLine();
+			switch (choice) {
+			case 1:
+				layThongTinGiaoHang();
+				break;
+			case 2:
+				pheDuyetThongTinGiaoHang();
+				break;
+			case 3:
+				lietKeShipper();
+				break;
+			case 0:
+				System.out.println("Bạn đã thoát chương trình!");
+				return;
+			default:
+				System.out.println("Chức năng không hợp lệ");
+			}
+		}
+	}
+
+	private static void layThongTinGiaoHang() {
+		xuLyThongTinDonHangDAO.layThongTinGiaoHang();
+	}
+
+	private static void pheDuyetThongTinGiaoHang() {
+		System.out.print("Nhập mã giao hàng: ");
+		String maGiaoHang = sc.nextLine();
+		if (xuLyThongTinDonHangDAO.isValidThongTinGiaoHang(maGiaoHang)) {
+			xuLyThongTinDonHangDAO.pheDuyetThongTinGiaoHang(maGiaoHang);
+		} else {
+			System.out.println("Không thể phê duyệt thông tin giao hàng");
+		}
+	}
+
+	private static void lietKeShipper() {
+		ArrayList<String> shippers = xuLyThongTinDonHangDAO.lietKeShipperGiaoHangTPVinhThang4();
+		if (!shippers.isEmpty()) {
+			System.out.println("Các shipper đã giao hàng cho các KH có địa chỉ ở TP Vinh trong tháng 4/2024:");
+			for (String shipper : shippers) {
+				System.out.println(shipper);
+			}
+		} else {
+			System.out.println("Không có shipper nào giao hàng cho các KH có địa chỉ ở TP Vinh trong tháng 4/2024.");
+		}
+	}
+
+	private static void xuLyThanhToan() {
+		while (true) {
+			System.out.println("------------------------------------------------------");
+			System.out.println("1. Tính phí ship trên trọng lượng");
+			System.out.println("2. Tính phí ship hàng tháng");
+			System.out.println("3. Báo cáo giao hàng hàng tháng");
+			System.out.println("4. Liệt kê KH trả nhiều phí ship nhất trong tháng 5/2024");
+			System.out.println("0. Thoát chương trình");
+			System.out.print("Nhập lựa chọn: ");
+			int choice = sc.nextInt();
+			switch (choice) {
+			case 1:
+				phiShipTrenTrongLuong();
+				break;
+			case 2:
+				phiShipHangThang();
+				break;
+			case 3:
+				baoCaoHangThang();
+				break;
+			case 4:
+				getKHTraNhieuTienNhat();
+				break;
+			case 0:
+				System.out.println("Bạn đã thoát chương trình!");
+				return;
+			default:
+				System.out.println("Chức năng không hợp lệ.");
+			}
+		}
+	}
+
+	private static void phiShipTrenTrongLuong() {
+		xuLyThanhToanDAO.phiShipTrenTrongLuong();
+	}
+
+	private static void phiShipHangThang() {
+		System.out.print("Nhập tháng: ");
+		int month = sc.nextInt();
+		xuLyThanhToanDAO.phiShipHangThang(month);
+	}
+
+	private static void baoCaoHangThang() {
+		System.out.print("Nhập tháng: ");
+		int month = sc.nextInt();
+		xuLyThanhToanDAO.baoCaoHangThang(month);
+	}
+
+	private static void getKHTraNhieuTienNhat() {
+		System.out.print("Nhập tháng: ");
+		int month = sc.nextInt();
+		xuLyThanhToanDAO.getKHTraNhieuTienNhat(month);
+	}
+}
