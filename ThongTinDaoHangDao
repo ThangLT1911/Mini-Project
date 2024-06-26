@@ -1,0 +1,156 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import database.Database;
+import entity.ThongTinGiaoHang;
+
+public class ThongTinGiaoHangDAO {
+	static Scanner sc = new Scanner(System.in);
+
+	public int insert(ThongTinGiaoHang ghn) {
+		try (Connection conn = Database.connectDB()) {
+
+			String sql = "INSERT INTO thongTinGiaoHang  (maGiaoHang, maShipper, ngayGiaoHang, dichVuGiaoHang, diaChiGiaoHang,tenNguoiNhan,soDienThoai,phuongThucThanhToan,yeuCauKhac,trangThaiPheDuyet,trangThaiGiaoHang,maKH,trongLuong,phi)"
+					+ " VALUES (? ,? ,? ,? ,?,?,?,?,?,?,?,?,?,? ) ";
+
+			PreparedStatement stm = conn.prepareStatement(sql);
+
+			stm.setString(1, ghn.getMaGiaoHang());
+			stm.setString(2, ghn.getMaShipper());
+			stm.setDate(3, ghn.getNgayGiaoHang());
+			stm.setString(4, ghn.getDichVuGiaoHang());
+			stm.setString(5, ghn.getDiaChiGiaoHang());
+			stm.setString(6, ghn.getTenNguoiNhan());
+			stm.setString(7, ghn.getSoDienThoai());
+			stm.setString(8, ghn.getPhuongThucThanhToan());
+			stm.setString(9, ghn.getYeuCauKhac());
+			stm.setString(10, ghn.getTrangThaiPheDuyet());
+			stm.setString(11, ghn.getTrangThaiGiaoHang());
+			stm.setString(12, ghn.getMaKH());
+			stm.setFloat(13, ghn.getTrongLuong());
+			stm.setInt(14, ghn.getPhi());
+
+			int count = stm.executeUpdate();
+			if (count > 0) {
+				System.out.println("Thêm thành công");
+
+			} else
+				System.out.println("Thêm  thất bại");
+
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			System.out.println("Lỗi  ");
+		}
+
+		return 0;
+	}
+
+	public int update(ThongTinGiaoHang ghn) {
+		try (Connection conn = Database.connectDB()) {
+			String sql = "UPDATE thongTinGiaoHang SET ngayGiaoHang = ?,dichVuGiaoHang = ?,diaChiGiaoHang = ?,tenNguoiNhan = ?,soDienThoai = ?,phuongThucThanhToan = ?,yeuCauKhac = ?,trangThaiPheDuyet = ?,trangThaiGiaoHang = ?,trongLuong = ?,phi = ?"
+					+ "WHERE maGiaoHang = ? ";
+
+			PreparedStatement stm = conn.prepareStatement(sql);
+
+			stm.setDate(1, ghn.getNgayGiaoHang());
+			stm.setString(2, ghn.getDichVuGiaoHang());
+			stm.setString(3, ghn.getDiaChiGiaoHang());
+			stm.setString(4, ghn.getTenNguoiNhan());
+			stm.setString(5, ghn.getSoDienThoai());
+			stm.setString(6, ghn.getPhuongThucThanhToan());
+			stm.setString(7, ghn.getYeuCauKhac());
+			stm.setString(8, ghn.getTrangThaiPheDuyet());
+			stm.setString(9, ghn.getTrangThaiGiaoHang());
+			stm.setFloat(10, ghn.getTrongLuong());
+			stm.setInt(11, ghn.getPhi());
+			stm.setString(12, ghn.getMaGiaoHang());
+
+			int count = stm.executeUpdate();
+			if (count > 0) {
+				System.out.println("update thành công");
+
+			} else
+				System.out.println("update  thất bại");
+
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+			System.out.println("Lỗi  ");
+		}
+
+		return 0;
+
+	}
+
+	public int delete(ThongTinGiaoHang ghn) {
+		try (Connection conn = Database.connectDB()) {
+			String sql = "DELETE FROM thongTinGiaoHang WHERE maGiaoHang = ?";
+
+			PreparedStatement stm = conn.prepareStatement(sql);
+			stm.setString(1, ghn.getMaGiaoHang());
+
+			int count = stm.executeUpdate();
+			if (count > 0) {
+				System.out.println("Xóa thành công");
+			} else {
+				System.out.println("Xóa thất bại");
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Lỗi");
+		}
+		return 0;
+	}
+
+	public void selectAll() {
+		try (Connection conn = Database.connectDB()) {
+			String sql = "select * from thongTinGiaoHang";
+			PreparedStatement stm = conn.prepareStatement(sql);
+			ResultSet rs = stm.executeQuery();
+			while (rs.next()) {
+				System.out.println("Mã giao hàng: " + rs.getString("maGiaoHang") + ", mã shipper: "
+						+ rs.getString("maShipper") + ", ngày giao hàng: " + rs.getDate("ngayGiaoHang")
+						+ ", dịch vụ giao hàng: " + rs.getString("dichVuGiaoHang") + ", địa chỉ giao hàng: "
+						+ rs.getString("diaChiGiaoHang") + ", tên người nhận: " + rs.getString("tenNguoiNhan")
+						+ ", số điện thoại: " + rs.getString("soDienThoai") + ", phương thức thanh toán"
+						+ rs.getString("phuongThucThanhToan") + ", yêu cầu khác: " + rs.getString("yeuCauKhac")
+						+ ", trạng thái phê duyệt: " + rs.getString("trangThaiPheDuyet") + ", trạng thái giao hàng: "
+						+ rs.getString("trangThaiGiaoHang") + ", trọng lượng: " + rs.getFloat("trongLuong") + ", phí: "
+						+ rs.getInt("phi"));
+			}
+		} catch (SQLException e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			System.out.println("Lỗi khi lấy thông tin toàn bộ đơn hàng");
+		}
+	}
+
+	public List<String> lietKeShipperNu() {
+		List<String> nuShippers = new ArrayList<>();
+		String sql = "SELECT DISTINCT s.maShipper " + "FROM shipper s "
+				+ "JOIN thongTinGiaoHang t ON s.maShipper = t.maShipper " + "WHERE s.gioiTinh = 'Nu' "
+				+ "AND t.ngayGiaoHang >= '2024-02-01' " + "AND t.ngayGiaoHang <= '2024-02-29'";
+
+		try (Connection conn = Database.connectDB();
+				PreparedStatement stm = conn.prepareStatement(sql);
+				ResultSet rs = stm.executeQuery()) {
+
+			while (rs.next()) {
+				String maShipper = rs.getString("maShipper");
+				nuShippers.add(maShipper);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+
+		return nuShippers;
+	}
+
+}
