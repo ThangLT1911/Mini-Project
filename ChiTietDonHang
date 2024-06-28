@@ -1,0 +1,83 @@
+package entity;
+
+import java.util.Scanner;
+
+public class ChiTietDonHang {
+	private String maGiaoHang;
+	private String tenDonHang;
+	private int soLuongHang;
+	private String loaiHang;
+
+	public ChiTietDonHang() {
+		super();
+	}
+
+	public ChiTietDonHang(String maGiaoHang, String tenDonHang, int soLuongHang, String loaiHang) {
+		super();
+		this.maGiaoHang = maGiaoHang;
+		this.tenDonHang = tenDonHang;
+		this.soLuongHang = soLuongHang;
+		this.loaiHang = loaiHang;
+	}
+
+	public String getMaGiaoHang() {
+		return maGiaoHang;
+	}
+
+	public void setMaGiaoHang(String maGiaoHang) {
+		this.maGiaoHang = maGiaoHang;
+	}
+
+	public String getTenDonHang() {
+		return tenDonHang;
+	}
+
+	public void setTenDonHang(String tenDonHang) {
+		this.tenDonHang = tenDonHang;
+	}
+
+	public int getSoLuongHang() {
+		return soLuongHang;
+	}
+
+	public void setSoLuongHang(int soLuongHang) {
+		this.soLuongHang = soLuongHang;
+	}
+
+	public String getLoaiHang() {
+		return loaiHang;
+	}
+
+	public void setLoaiHang(String loaiHang) {
+		this.loaiHang = loaiHang;
+	}
+
+	public void inputThongTin() {
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Nhập mã giao hàng: ");
+		maGiaoHang = sc.nextLine();
+		if (maGiaoHang == null || maGiaoHang.isEmpty()) {
+			throw new IllegalArgumentException("Mã giao hàng không được để trống");
+		}
+		System.out.println("Nhập tên đơn hàng: ");
+		tenDonHang = sc.nextLine();
+		if (tenDonHang == null || tenDonHang.isEmpty()) {
+			throw new IllegalArgumentException("Tên đơn hàng không được để trống");
+		}
+		System.out.println("Nhập số lượng hàng: ");
+		if (sc.hasNextInt()) {
+			soLuongHang = sc.nextInt();
+			if (soLuongHang <= 0) {
+				throw new IllegalArgumentException("Số lượng hàng phải là số dương");
+			}
+		} else {
+			throw new IllegalArgumentException("Số lượng hàng phải là một số nguyên");
+		}
+		sc.nextLine();
+		System.out.println("Nhập loại hàng: ");
+		loaiHang = sc.nextLine();
+		if (loaiHang == null || loaiHang.isEmpty()) {
+			throw new IllegalArgumentException("Loại hàng không được để trống");
+		}
+	}
+}
