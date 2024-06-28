@@ -1,0 +1,162 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+import database.Database;
+import entity.KhachHang;
+
+public class KhachHangDAO {
+	private static final String INSERT_KHACHHANG_SQL = "INSERT INTO KhachHang (maKH, tenKH, gioiTinh, diaChi, soDienThoai) VALUES (?,?,?,?,?)";
+	private static final String SELECT_KHACHHANG_BY_maKH = "SELECT * FROM KhachHang WHERE maKH = ?";
+	private static final String SELECT_ALL_KHACHHANG = "SELECT * FROM khachHang";
+	private static final String DELETE_KHACHHANG_SQL = "DELETE FROM KhachHang WHERE maKH =?";
+	private static final String UPDATE_KHACHHANG_SQL = "UPDATE KhachHang SET tenKH=?, gioiTinh=?, diaChi=?, soDienThoai=? WHERE maKH=?";
+	private static Scanner sc = new Scanner(System.in);
+	static Connection conn = null;
+	static PreparedStatement pstmt = null;
+	static ResultSet rs = null;
+
+	public static void addKhachHang(KhachHang khachHang) {
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(INSERT_KHACHHANG_SQL);
+			pstmt.setString(1, khachHang.getMaKH());
+			pstmt.setString(2, khachHang.getTenKH());
+			pstmt.setString(3, khachHang.getGioiTinh());
+			pstmt.setString(4, khachHang.getDiaChi());
+			pstmt.setString(5, khachHang.getSoDienThoai());
+			pstmt.executeUpdate();
+			System.out.println("Them thanh cong");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void getKhachHang() {
+		System.out.println("Nhap ma KH : ");
+		String maKH1 = sc.nextLine();
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(SELECT_KHACHHANG_BY_maKH);
+			pstmt.setString(1, maKH1);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String maKH = rs.getString("maKH");
+				String tenKH = rs.getString("tenKH");
+				String gioiTinh = rs.getString("gioiTinh");
+				String diaChi = rs.getString("diaChi");
+				String soDienThoai = rs.getString("soDienThoai");
+				System.out.println("Mã khách hàng: " + maKH + ", tên khách hàng: " + tenKH + ", giới tính: " + gioiTinh
+						+ ", địa chỉ: " + diaChi + ", số điện thoại: " + soDienThoai);
+			}
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+		}
+		// return khachhang;
+	}
+
+	public static void getAllKhachHang() {
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(SELECT_ALL_KHACHHANG);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String maKH = rs.getString("maKH");
+				String tenKH = rs.getString("tenKH");
+				String gioiTinh = rs.getString("gioiTinh");
+				String diaChi = rs.getString("diaChi");
+				String soDienThoai = rs.getString("soDienThoai");
+				System.out.println("Mã khách hàng: " + maKH + ", tên khách hàng: " + tenKH + ", giới tính: " + gioiTinh
+						+ ", địa chỉ: " + diaChi + ", số điện thoại: " + soDienThoai);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e2) {
+					e2.printStackTrace();
+				}
+			}
+		}
+
+	}
+
+	public static void updateKhachHang() {
+		try {
+			KhachHang khachHang = new KhachHang();
+			System.out.println("Nhập mã khách hàng cần cập nhật:");
+			khachHang.setMaKH(sc.nextLine());
+			System.out.println("Nhập tên khách hàng mới:");
+			khachHang.setTenKH(sc.nextLine());
+			System.out.println("Giới tính: ");
+			khachHang.setGioiTinh(sc.nextLine());
+			System.out.println("Địa chỉ: ");
+			khachHang.setDiaChi(sc.nextLine());
+			System.out.println("Số điện thoại: ");
+			khachHang.setSoDienThoai(sc.nextLine());
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(UPDATE_KHACHHANG_SQL);
+			pstmt.setString(1, khachHang.getTenKH());
+			pstmt.setString(2, khachHang.getGioiTinh());
+			pstmt.setString(3, khachHang.getDiaChi());
+			pstmt.setString(4, khachHang.getSoDienThoai());
+			pstmt.setString(5, khachHang.getMaKH());
+			int count = pstmt.executeUpdate();
+			if (count > 0) {
+				System.out.println("update thành công");
+			} else
+				System.out.println("update thất bại");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void deleteKhachHang() {
+		System.out.println("Nhap ma KH can xoa: ");
+		String maKH2 = sc.nextLine();
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(DELETE_KHACHHANG_SQL);
+			pstmt.setString(1, maKH2);
+			pstmt.executeUpdate();
+			System.out.println("Xoa thanh cong!");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void selectFirstquarter() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		Date sdate = Date.valueOf("2024-01-01");
+		Date edate = Date.valueOf("2024-03-31");
+		String query = "SELECT maShipper, count(maGiaoHang) as soDonDaGiao FROM thongTinGiaoHang WHERE trangThaiGiaoHang = 'da giao' AND ngayGiaoHang BETWEEN ? AND ? group by maShipper";
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(query);
+			pstmt.setDate(1, sdate);
+			pstmt.setDate(2, edate);
+			rs = pstmt.executeQuery();
+			if (rs.next()) {
+				String maShipper = rs.getString("maShipper");
+				int soDonDaGiao = rs.getInt("soDonDaGiao");
+				System.out.println("Shipper giao thành công nhiều đơn hàng nhất trong quý I/2024:");
+				System.out.println("Mã shipper: " + maShipper + ", Số đơn đã giao: " + soDonDaGiao);
+			} else {
+				System.out.println("Không có dữ liệu về Shipper giao thành công nhiều đơn hàng nhất trong quý I/2024.");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+}
