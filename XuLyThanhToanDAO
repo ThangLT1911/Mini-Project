@@ -1,0 +1,154 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
+import database.Database;
+
+public class XuLyThanhToanDAO {
+	private static final String TINH_PHI_SHIP_TREN_TRONG_LUONG_SQL = "update thongTinGiaoHang set phi = trongLuong * 40 where trangThaiGiaoHang = 'Da giao'";
+	private static final String PHI_SHIP_HANG_THANG_SQL = "select maKH, sum(phi) as tongPhi from thongTinGiaoHang where month(ngayGiaoHang) = ? and year(ngayGiaoHang) = 2024 and trangThaiGiaoHang = 'Da giao' group by maKH";
+	private static final String BAO_CAO_HANG_THANG_SQL = "select maShipper, count(maGiaoHang) as tongDonGiao, sum(phi) as tongPhi from thongTinGiaoHang where month(ngayGiaoHang) = ? and year(ngayGiaoHang) = ? and trangThaiGiaoHang = 'Da giao' group by maShipper ";
+	private static final String KH_TRA_NHIEU_TIEN_NHAT_SQL = "select maKH, sum(phi) as tongPhi from thongTinGiaoHang where month(ngayGiaoHang) = ? and year(ngayGiaoHang) = ? and trangThaiGiaoHang = 'Da Giao' group by maKH order by tongPhi desc";
+	private static final String TRUOC_KHI_UPDATE = "select maGiaoHang, trongLuong, phi from thongTinGiaoHang where trangThaiGiaoHang = 'Da giao'";
+
+	Connection conn = null;
+	PreparedStatement pstmt = null;
+	ResultSet rs = null;
+
+	public void phiShipTrenTrongLuong() {
+		try {
+			conn = Database.connectDB();
+
+			System.out.println("Phí ship trước khi được tính dựa trên trọng lượng: ");
+			pstmt = conn.prepareStatement(TRUOC_KHI_UPDATE);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String maGiaoHang = rs.getString("maGiaoHang");
+				float trongLuong = rs.getFloat("trongLuong");
+				int phi = rs.getInt("phi");
+				System.out.println("Mã giao hàng: " + maGiaoHang + ", trọng lượng: " + trongLuong + ", phí: " + phi);
+			}
+
+			pstmt = conn.prepareStatement(TINH_PHI_SHIP_TREN_TRONG_LUONG_SQL);
+			int count = pstmt.executeUpdate();
+			if (count > 0) {
+				System.out.println("Phí ship đã được tính dựa trên trọng lượng");
+			} else {
+				System.out.println("Không có record nào được update");
+			}
+
+			System.out.println("Phí ship sau khi tính dựa trên trọng lượng:");
+			pstmt = conn.prepareStatement(TRUOC_KHI_UPDATE);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String maGiaoHang = rs.getString("maGiaoHang");
+				float trongLuong = rs.getFloat("trongLuong");
+				int phi = rs.getInt("phi");
+				System.out.println("Mã giao hàng: " + maGiaoHang + ", trọng lượng: " + trongLuong + ", phí: " + phi);
+			}
+		} catch (SQLException e) {
+			System.err.println("Lỗi khi tính phí ship dựa trên trọng lượng: " + e.getMessage());
+		} finally {
+			Database.closeConnection(conn);
+		}
+	}
+
+	public void phiShipHangThang(int month) {
+		if (month < 1 || month > 12) {
+			System.err.println("Tháng không hợp lệ: " + month);
+			return;
+		}
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(PHI_SHIP_HANG_THANG_SQL);
+			pstmt.setInt(1, month);
+
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				String customerID = rs.getString("maKH");
+				int tongPhi = rs.getInt("tongPhi");
+				System.out.println("Mã Khách Hàng: " + customerID + ", tổng phí vận chuyển: " + tongPhi);
+			}
+		} catch (SQLException e) {
+			System.err.println("Lỗi khi tính phí ship hàng tháng cho tháng " + month + ": " + e.getMessage());
+		} finally {
+			Database.closeConnection(conn);
+		}
+	}
+
+	public void baoCaoHangThang(int month) {
+		if (month < 1 || month > 12) {
+			System.err.println("Tháng không hợp lệ: " + month);
+			return;
+		}
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(BAO_CAO_HANG_THANG_SQL);
+			pstmt.setInt(1, month);
+			pstmt.setInt(2, 2024);
+
+			rs = pstmt.executeQuery();
+			List<String> baoCaoList = new ArrayList<>();
+			while (rs.next()) {
+				String maShipper = rs.getString("maShipper");
+				int tongDonGiao = rs.getInt("tongDonGiao");
+				int tongPhi = rs.getInt("tongPhi");
+				String report = "Mã shipper: " + maShipper + ", tổng đơn giao: " + tongDonGiao + ", tổng phí: "
+						+ tongPhi;
+				baoCaoList.add(report);
+			}
+
+			if (baoCaoList.isEmpty()) {
+				System.out.println("Không có shipper nào có đơn hàng tại tháng " + month + "/2024");
+			} else {
+				System.out.println("Báo cáo hàng tháng " + month + "/2024");
+				for (String report : baoCaoList) {
+					System.out.println(report);
+				}
+			}
+		} catch (SQLException e) {
+			System.err.println("Lỗi khi tạo báo cáo giao hàng hàng tháng cho tháng " + month + ": " + e.getMessage());
+		} finally {
+			Database.closeConnection(conn);
+		}
+	}
+
+	public void getKHTraNhieuTienNhat(int month) {
+		if (month < 1 || month > 12) {
+			System.err.println("Tháng không hợp lệ: " + month);
+			return;
+		}
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(KH_TRA_NHIEU_TIEN_NHAT_SQL);
+			pstmt.setInt(1, month);
+			pstmt.setInt(2, 2024);
+			if (rs.next()) {
+				int phiCaoNhat = rs.getInt("tongPhi");
+				System.out.println("Khách hàng trả phí cao nhất tháng " + month + "/2024: ");
+
+				do {
+					String maKH = rs.getString("maKH");
+					int tongPhi = rs.getInt("tongPhi");
+					if (tongPhi == phiCaoNhat) {
+						System.out.println("Mã khách hàng: " + maKH + ", tổng phí: " + tongPhi);
+					} else {
+						break;
+					}
+				} while (rs.next());
+			} else {
+				System.out.println("Không có khách hàng nào tại tháng 5/2024");
+			}
+
+		} catch (Exception e) {
+			System.err.println("Lỗi khi lấy khách hàng trả nhiều tiền nhất tháng " + month + ": " + e.getMessage());
+		} finally {
+			Database.closeConnection(conn);
+		}
+	}
+}

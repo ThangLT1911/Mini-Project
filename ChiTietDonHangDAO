@@ -1,0 +1,84 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import database.Database;
+import entity.ChiTietDonHang;
+
+public class ChiTietDonHangDAO {
+	public static void insertChiTietDonHang(ChiTietDonHang chiTietDonHang) {
+		String sql = "INSERT INTO ChiTietDonHang (maGiaoHang, tenDonHang, soLuongHang, loaiHang) VALUES (?, ?, ?, ?)";
+		try (Connection conn = Database.connectDB(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, chiTietDonHang.getMaGiaoHang());
+			stmt.setString(2, chiTietDonHang.getTenDonHang());
+			stmt.setInt(3, chiTietDonHang.getSoLuongHang());
+			stmt.setString(4, chiTietDonHang.getLoaiHang());
+			stmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static ChiTietDonHang getChiTietDonHang(String maGiaoHang) {
+		ChiTietDonHang chiTietDonHang = null;
+		String sql = "SELECT * FROM ChiTietDonHang WHERE maGiaoHang = ?";
+		try (Connection conn = Database.connectDB(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, maGiaoHang);
+			ResultSet rs = stmt.executeQuery();
+			if (rs.next()) {
+				chiTietDonHang = new ChiTietDonHang();
+				chiTietDonHang.setMaGiaoHang(rs.getString("maGiaoHang"));
+				chiTietDonHang.setTenDonHang(rs.getString("tenDonHang"));
+				chiTietDonHang.setSoLuongHang(rs.getInt("soLuongHang"));
+				chiTietDonHang.setLoaiHang(rs.getString("loaiHang"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return chiTietDonHang;
+	}
+
+	public static void updateChiTietDonHang(ChiTietDonHang chiTietDonHang) {
+		String sql = "UPDATE ChiTietDonHang SET tenDonHang = ?, soLuongHang = ?, loaiHang = ? WHERE maGiaoHang = ?";
+		try (Connection conn = Database.connectDB(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+			stmt.setString(1, chiTietDonHang.getTenDonHang());
+			stmt.setInt(2, chiTietDonHang.getSoLuongHang());
+			stmt.setString(3, chiTietDonHang.getLoaiHang());
+			stmt.setString(4, chiTietDonHang.getMaGiaoHang());
+			int rowsAffected = stmt.executeUpdate();
+			if (rowsAffected > 0) {
+				System.out.println("Cập nhật thông tin chi tiết đơn hàng thành công.");
+			} else {
+				System.out.println("Không tìm thấy chi tiết đơn hàng để cập nhật.");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void deleteChiTietDonHang(String maGiaoHang, String tenDonHang) {
+		String sql1 = "DELETE FROM ThongTinGiaoHang WHERE maGiaoHang = ?";
+		String sql2 = "DELETE FROM ChiTietDonHang WHERE maGiaoHang = ? AND tenDonHang = ?";
+		try (Connection conn = Database.connectDB()) {
+			try (PreparedStatement stmt1 = conn.prepareStatement(sql1);
+					PreparedStatement stmt2 = conn.prepareStatement(sql2)) {
+				stmt1.setString(1, maGiaoHang);
+				int rowsAffected1 = stmt1.executeUpdate();
+				stmt2.setString(1, maGiaoHang);
+				stmt2.setString(2, tenDonHang);
+				int rowsAffected2 = stmt2.executeUpdate();
+				if (rowsAffected1 > 0 || rowsAffected2 > 0) {
+					System.out.println("Xóa chi tiết đơn hàng thành công.");
+				} else {
+					System.out.println("Không tìm thấy chi tiết đơn hàng để xóa.");
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+}
