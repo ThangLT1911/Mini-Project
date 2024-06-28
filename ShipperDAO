@@ -1,0 +1,244 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+import java.util.regex.Pattern;
+
+import database.Database;
+import entity.Shipper;
+
+public class ShipperDAO {
+	private static final String INSERT_SHIPPER = "insert into shipper(maShipper, hoTen, ngaySinh, gioiTinh, soDienThoai, diaChiCuTru, email, truong, lop ) values (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+	private static final String SELECT_ALL = "select * from shipper";
+	private static final String SELECT_BY_ID = "select * from shipper where maShipper = ?";
+	private static final String UPDATE_SHIPPER = "update shipper SET hoTen = ?, ngaySinh = ?, gioiTinh = ?, soDienThoai = ?, email = ?, truong = ?, lop = ?, diaChiCuTru = ? WHERE maShipper = ?";
+	private static final String DELETE_SHIPPER = "delete from shipper where maShipper = ?";
+
+	public static void insertShipper(Shipper sp) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(INSERT_SHIPPER);
+			pstmt.setString(1, sp.getMaShipper());
+			pstmt.setString(2, sp.getHoTen());
+			pstmt.setDate(3, sp.getNgaySinh());
+			pstmt.setString(4, sp.getGioiTinh());
+			pstmt.setString(5, sp.getSoDienThoai());
+			pstmt.setString(6, sp.getDiaChiCuTru());
+			pstmt.setString(7, sp.getEmail());
+			pstmt.setString(8, sp.getTruong());
+			pstmt.setString(9, sp.getLop());
+			int count = pstmt.executeUpdate();
+			if (count > 0) {
+				System.out.println("Thêm thành công");
+
+			} else
+				System.out.println("Thêm thất bại");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Lỗi khi thêm shipper!");
+		} finally {
+			Database.closeConnection(conn);
+		}
+	}
+
+	public static void updateShipper(Shipper sp) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(UPDATE_SHIPPER);
+			pstmt.setString(1, sp.getMaShipper());
+			pstmt.setString(2, sp.getHoTen());
+			pstmt.setDate(3, sp.getNgaySinh());
+			pstmt.setString(4, sp.getGioiTinh());
+			pstmt.setString(5, sp.getSoDienThoai());
+			pstmt.setString(6, sp.getDiaChiCuTru());
+			pstmt.setString(7, sp.getEmail());
+			pstmt.setString(8, sp.getTruong());
+			pstmt.setString(9, sp.getLop());
+			int count = pstmt.executeUpdate();
+			if (count > 0) {
+				System.out.println("update thành công");
+
+			} else
+				System.out.println("update thất bại");
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Lỗi khi cập nhật thông tin shipper: " + e.getMessage());
+		} finally {
+			Database.closeConnection(conn);
+		}
+	}
+
+	public static void deleteShipper(Shipper sp) {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(DELETE_SHIPPER);
+			pstmt.setString(1, sp.getMaShipper());
+
+			int count = pstmt.executeUpdate();
+			if (count > 0) {
+				System.out.println("Xóa thành công");
+			} else {
+				System.out.println("Xóa thất bại");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Lỗi");
+		}
+	}
+
+	public static void selectShipper() {
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(SELECT_ALL);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				System.out.println("Mã shipper: " + rs.getString("maShipper") + ", họ tên: " + rs.getString("hoTen")
+						+ ", ngày sinh: " + rs.getDate("ngaySinh") + ", giới tính: " + rs.getString("gioiTinh")
+						+ ", số điện thoại: " + rs.getString("soDienThoai") + ", địa chỉ cư trú: "
+						+ rs.getString("diaChiCuTru") + ", email: " + rs.getString("email") + ", trường: "
+						+ rs.getString("truong") + ", lớp: " + rs.getString("lop"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			System.out.println("Lỗi khi lấy thông tin shipper");
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			Database.closeConnection(conn);
+		}
+	}
+
+	public static void selectShipperByID() {
+		Scanner sc = new Scanner(System.in);
+		System.out.print("Nhập mã shipper cần tìm: ");
+		String maShipper = sc.nextLine();
+		Connection conn = null;
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			conn = Database.connectDB();
+			pstmt = conn.prepareStatement(SELECT_BY_ID);
+			pstmt.setString(1, maShipper);
+			rs = pstmt.executeQuery();
+			while (rs.next()) {
+				System.out.println("Mã shipper: " + rs.getString("maShipper") + ", họ tên: " + rs.getString("hoTen")
+						+ ", ngày sinh: " + rs.getDate("ngaySinh") + ", giới tính: " + rs.getString("gioiTinh")
+						+ ", số điện thoại: " + rs.getString("soDienThoai") + ", địa chỉ cư trú: "
+						+ rs.getString("diaChiCuTru") + ", email: " + rs.getString("email") + ", trường: "
+						+ rs.getString("truong") + ", lớp: " + rs.getString("lop"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+			Database.closeConnection(conn);
+		}
+
+	}
+
+	public static List<Shipper> getShipperKhongGiaoHang(String ngayBatDauStr, String ngayKetThucStr) {
+		List<Shipper> shippers = new ArrayList<>();
+		String sql = "SELECT sp.* FROM Shipper sp " + "LEFT JOIN ThongTinGiaoHang tt ON sp.maShipper = tt.maShipper "
+				+ "WHERE tt.maShipper IS NULL OR (tt.ngayGiaoHang NOT BETWEEN ? AND ?)";
+		try (Connection conn = Database.connectDB(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, ngayBatDauStr);
+			pstmt.setString(2, ngayKetThucStr);
+			try (ResultSet rs = pstmt.executeQuery()) {
+				while (rs.next()) {
+					Shipper shipper = new Shipper();
+					shipper.setMaShipper(rs.getString("maShipper"));
+					shipper.setHoTen(rs.getString("hoTen"));
+					shipper.setNgaySinh(rs.getDate("ngaySinh"));
+					shipper.setGioiTinh(rs.getString("gioiTinh"));
+					shipper.setSoDienThoai(rs.getString("soDienThoai"));
+					shipper.setDiaChiCuTru(rs.getString("diaChiCuTru"));
+					shipper.setEmail(rs.getString("email"));
+					shipper.setTruong(rs.getString("truong"));
+					shipper.setLop(rs.getString("lop"));
+					shippers.add(shipper);
+				}
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return shippers;
+	}
+
+	public boolean validateShipper(Shipper s) {
+		if (s.getMaShipper() == null || s.getMaShipper().isEmpty()) {
+			System.out.println("Mã shipper không được để trống.");
+			return false;
+		}
+		if (s.getMaShipper().length() > 10) {
+			System.out.println("Mã shipper không được quá 10 ký tự.");
+			return false;
+		}
+		if (s.getHoTen() == null || s.getHoTen().isEmpty()) {
+			System.out.println("Họ tên shipper không được để trống.");
+			return false;
+		}
+		if (s.getHoTen().length() > 200) {
+			System.out.println("Họ tên shipper không được quá 200 ký tự.");
+			return false;
+		}
+
+		if (s.getGioiTinh() != null && s.getGioiTinh().length() > 10) {
+			System.out.println("Giới tính không được quá 10 ký tự.");
+			return false;
+		}
+		if (s.getSoDienThoai() != null && s.getSoDienThoai().length() > 20) {
+			System.out.println("Số điện thoại không được quá 20 ký tự.");
+			return false;
+		}
+		if (s.getEmail() != null && s.getEmail().length() > 100) {
+			System.out.println("Email không được quá 100 ký tự.");
+			return false;
+		}
+		if (s.getEmail() != null && !isValidEmail(s.getEmail())) {
+			System.out.println("Email không hợp lệ.");
+			return false;
+		}
+		if (s.getTruong() != null && s.getTruong().length() > 50) {
+			System.out.println("Trường không được quá 50 ký tự.");
+			return false;
+		}
+		if (s.getLop() != null && s.getLop().length() > 50) {
+			System.out.println("Lớp không được quá 50 ký tự.");
+			return false;
+		}
+		return true;
+	}
+
+	private boolean isValidEmail(String email) {
+		String regex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+		Pattern pattern = Pattern.compile(regex);
+		return pattern.matcher(email).matches();
+	}
+}
