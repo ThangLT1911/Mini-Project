@@ -1,0 +1,131 @@
+package dao;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+import database.Database;
+
+public class XuLyThongTinDonHangDAO {
+	private Connection conn = null;
+	private static Scanner sc = new Scanner(System.in);
+
+	public void layThongTinGiaoHang() {
+		System.out.print("Nhập mã giao hàng: ");
+		String maGiaoHang = sc.nextLine();
+		boolean find = false;
+		try {
+			conn = Database.connectDB();
+			String sql = "SELECT * FROM thongTinGiaoHang WHERE maGiaoHang = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, maGiaoHang);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				find = true;
+				System.out.println("Mã giao hàng: " + rs.getString("maGiaoHang") + ", mã shipper: "
+						+ rs.getString("maShipper") + ", ngày giao hàng: " + rs.getDate("ngayGiaoHang")
+						+ ", dịch vụ giao hàng: " + rs.getString("dichVuGiaoHang") + ", địa chỉ giao hàng: "
+						+ rs.getString("diaChiGiaoHang") + ", tên người nhận: " + rs.getString("tenNguoiNhan")
+						+ ", số điện thoại: " + rs.getString("soDienThoai") + ", phương thức thanh toán"
+						+ rs.getString("phuongThucThanhToan") + ", yêu cầu khác: " + rs.getString("yeuCauKhac")
+						+ ", trạng thái phê duyệt: " + rs.getString("trangThaiPheDuyet") + ", trạng thái giao hàng: "
+						+ rs.getString("trangThaiGiaoHang") + ", trọng lượng: " + rs.getFloat("trongLuong") + ", phí: "
+						+ rs.getInt("phi"));
+			}
+			if (!find) {
+				System.out.println("Không tìm thấy đơn hàng với mã: " + maGiaoHang);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (conn != null && !conn.isClosed()) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public boolean isValidThongTinGiaoHang(String maGiaoHang) {
+		String sql = "SELECT * FROM thongTinGiaoHang WHERE maGiaoHang = ?";
+		try {
+			conn = Database.connectDB();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, maGiaoHang);
+
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				String trangThaiPheDuyet = rs.getString("trangThaiPheDuyet");
+				if (!trangThaiPheDuyet.equals("chua phe duyet")) {
+					System.out.println("Thông tin giao hàng đã được duyệt trước đó");
+					return false;
+				}
+				return true;
+			} else {
+				System.out.println("Không tìm thấy mã giao hàng");
+				return false;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		} finally {
+			try {
+				if (conn != null && !conn.isClosed()) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public void pheDuyetThongTinGiaoHang(String maGiaoHang) {
+		try {
+			conn = Database.connectDB();
+			String sql = "UPDATE thongTinGiaoHang SET trangThaiPheDuyet = 'Da phe duyet' WHERE maGiaoHang = ?";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, maGiaoHang);
+			int rowsUpdated = ps.executeUpdate();
+			if (rowsUpdated > 0) {
+				System.out.println("Đã phê duyệt thông tin giao hàng có mã: " + maGiaoHang);
+			} else {
+				System.out.println("Không tìm thấy thông tin giao hàng có mã: " + maGiaoHang);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (conn != null && !conn.isClosed()) {
+					conn.close();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public ArrayList<String> lietKeShipperGiaoHangTPVinhThang4() {
+		ArrayList<String> shipperList = new ArrayList<>();
+		try {
+			conn = Database.connectDB();
+			String sql = "SELECT DISTINCT maShipper FROM thongTinGiaoHang WHERE diaChiGiaoHang LIKE '%Vinh%' AND MONTH(ngayGiaoHang) = 4 AND YEAR(ngayGiaoHang) = 2024";
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				shipperList.add(rs.getString("maShipper"));
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return shipperList;
+	}
+
+}
