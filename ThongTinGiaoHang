@@ -1,0 +1,178 @@
+package entity;
+
+import java.sql.Date;
+
+public class ThongTinGiaoHang {
+	private String maGiaoHang;
+	private String maShipper;
+	private Date ngayGiaoHang;
+	private String dichVuGiaoHang;
+	private String diaChiGiaoHang;
+	private String tenNguoiNhan;
+	private String soDienThoai;
+	private String phuongThucThanhToan;
+	private String yeuCauKhac;
+	private String trangThaiPheDuyet;
+	private String trangThaiGiaoHang;
+	private String maKH;
+	private float trongLuong;
+	private int phi;
+	private boolean paid;
+
+	public ThongTinGiaoHang() {
+		super();
+	}
+
+	public ThongTinGiaoHang(String maGiaoHang, String maShipper, Date ngayGiaoHang, String dichVuGiaoHang,
+			String diaChiGiaoHang, String tenNguoiNhan, String soDienThoai, String phuongThucThanhToan,
+			String yeuCauKhac, String trangThaiPheDuyet, String trangThaiGiaoHang, String maKH, float trongLuong,
+			int phi, boolean paid) {
+		super();
+		this.maGiaoHang = maGiaoHang;
+		this.maShipper = maShipper;
+		this.ngayGiaoHang = ngayGiaoHang;
+		this.dichVuGiaoHang = dichVuGiaoHang;
+		this.diaChiGiaoHang = diaChiGiaoHang;
+		this.tenNguoiNhan = tenNguoiNhan;
+		this.soDienThoai = soDienThoai;
+		this.phuongThucThanhToan = phuongThucThanhToan;
+		this.yeuCauKhac = yeuCauKhac;
+		this.trangThaiPheDuyet = trangThaiPheDuyet;
+		this.trangThaiGiaoHang = trangThaiGiaoHang;
+		this.maKH = maKH;
+		this.trongLuong = trongLuong;
+		this.phi = phi;
+		this.paid = paid;
+	}
+
+	public String getMaGiaoHang() {
+		return maGiaoHang;
+	}
+
+	public void setMaGiaoHang(String maGiaoHang) {
+		this.maGiaoHang = maGiaoHang;
+	}
+
+	public String getMaShipper() {
+		return maShipper;
+	}
+
+	public void setMaShipper(String maShipper) {
+		this.maShipper = maShipper;
+	}
+
+	public Date getNgayGiaoHang() {
+		return ngayGiaoHang;
+	}
+
+	public void setNgayGiaoHang(Date ngayGiaoHang) {
+		this.ngayGiaoHang = ngayGiaoHang;
+	}
+
+	public String getDichVuGiaoHang() {
+		return dichVuGiaoHang;
+	}
+
+	public void setDichVuGiaoHang(String dichVuGiaoHang) {
+		this.dichVuGiaoHang = dichVuGiaoHang;
+	}
+
+	public String getDiaChiGiaoHang() {
+		return diaChiGiaoHang;
+	}
+
+	public void setDiaChiGiaoHang(String diaChiGiaoHang) {
+		this.diaChiGiaoHang = diaChiGiaoHang;
+	}
+
+	public String getTenNguoiNhan() {
+		return tenNguoiNhan;
+	}
+
+	public void setTenNguoiNhan(String tenNguoiNhan) {
+		this.tenNguoiNhan = tenNguoiNhan;
+	}
+
+	public String getSoDienThoai() {
+		return soDienThoai;
+	}
+
+	public void setSoDienThoai(String soDienThoai) {
+		this.soDienThoai = soDienThoai;
+	}
+
+	public String getPhuongThucThanhToan() {
+		return phuongThucThanhToan;
+	}
+
+	public void setPhuongThucThanhToan(String phuongThucThanhToan) {
+		this.phuongThucThanhToan = phuongThucThanhToan;
+	}
+
+	public String getYeuCauKhac() {
+		return yeuCauKhac;
+	}
+
+	public void setYeuCauKhac(String yeuCauKhac) {
+		this.yeuCauKhac = yeuCauKhac;
+	}
+
+	public String getTrangThaiPheDuyet() {
+		return trangThaiPheDuyet;
+	}
+
+	public void setTrangThaiPheDuyet(String trangThaiPheDuyet) {
+		this.trangThaiPheDuyet = trangThaiPheDuyet;
+	}
+
+	public String getTrangThaiGiaoHang() {
+		return trangThaiGiaoHang;
+	}
+
+	public void setTrangThaiGiaoHang(String trangThaiGiaoHang) {
+		this.trangThaiGiaoHang = trangThaiGiaoHang;
+	}
+
+	public String getMaKH() {
+		return maKH;
+	}
+
+	public void setMaKH(String maKH) {
+		this.maKH = maKH;
+	}
+
+	public float getTrongLuong() {
+		return trongLuong;
+	}
+
+	public void setTrongLuong(float trongLuong) {
+		this.trongLuong = trongLuong;
+	}
+
+	public int getPhi() {
+		return phi;
+	}
+
+	public void setPhi(int phi) {
+		this.phi = phi;
+	}
+
+	public boolean isPaid() {
+		return paid;
+	}
+
+	public void setPaid(boolean paid) {
+		this.paid = paid;
+	}
+
+	@Override
+	public String toString() {
+		return "ThongTinGiaoHang [maGiaoHang=" + maGiaoHang + ", maShipper=" + maShipper + ", ngayGiaoHang="
+				+ ngayGiaoHang + ", dichVuGiaoHang=" + dichVuGiaoHang + ", diaChiGiaoHang=" + diaChiGiaoHang
+				+ ", tenNguoiNhan=" + tenNguoiNhan + ", soDienThoai=" + soDienThoai + ", phuongThucThanhToan="
+				+ phuongThucThanhToan + ", yeuCauKhac=" + yeuCauKhac + ", trangThaiPheDuyet=" + trangThaiPheDuyet
+				+ ", trangThaiGiaoHang=" + trangThaiGiaoHang + ", maKH=" + maKH + ", trongLuong=" + trongLuong
+				+ ", phi=" + phi + ", paid=" + paid + "]";
+	}
+
+}

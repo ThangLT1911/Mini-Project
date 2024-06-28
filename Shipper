@@ -1,0 +1,118 @@
+package entity;
+
+import java.sql.Date;
+
+public class Shipper {
+	private String maShipper;
+	private String hoTen;
+	private Date ngaySinh;
+	private String gioiTinh;
+	private String soDienThoai;
+	private String diaChiCuTru;
+	private String email;
+	private String truong;
+	private String lop;
+
+	public Shipper() {
+		super();
+	}
+
+	public Shipper(String maShipper, String hoTen, Date ngaySinh, String gioiTinh, String soDienThoai,
+			String diaChiCuTru, String email, String truong, String lop) {
+		super();
+		this.maShipper = maShipper;
+		this.hoTen = hoTen;
+		this.ngaySinh = ngaySinh;
+		this.gioiTinh = gioiTinh;
+		this.soDienThoai = soDienThoai;
+		this.diaChiCuTru = diaChiCuTru;
+		this.email = email;
+		this.truong = truong;
+		this.lop = lop;
+	}
+
+	public String getMaShipper() {
+		return maShipper;
+	}
+
+	public void setMaShipper(String maShipper) {
+		this.maShipper = maShipper;
+	}
+
+	public String getHoTen() {
+		return hoTen;
+	}
+
+	public void setHoTen(String hoTen) {
+		this.hoTen = hoTen;
+	}
+
+	public Date getNgaySinh() {
+		return ngaySinh;
+	}
+
+	public void setNgaySinh(Date ngaySinh) {
+		this.ngaySinh = ngaySinh;
+	}
+
+	public String getGioiTinh() {
+		return gioiTinh;
+	}
+
+	public void setGioiTinh(String gioiTinh) {
+		this.gioiTinh = gioiTinh;
+	}
+
+	public String getDiaChiCuTru() {
+		return diaChiCuTru;
+	}
+
+	public void setDiaChiCuTru(String diaChiCuTru) {
+		this.diaChiCuTru = diaChiCuTru;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getTruong() {
+		return truong;
+	}
+
+	public void setTruong(String truong) {
+		this.truong = truong;
+	}
+
+	public String getLop() {
+		return lop;
+	}
+
+	public void setLop(String lop) {
+		this.lop = lop;
+	}
+
+	public String getSoDienThoai() {
+		return soDienThoai;
+	}
+
+	public void setSoDienThoai(String soDienThoai) {
+		this.soDienThoai = soDienThoai;
+	}
+
+	public void showInfor() {
+		System.out.println("Thông tin Shipper:");
+		System.out.println("Mã Shipper: " + maShipper);
+		System.out.println("Họ và tên: " + hoTen);
+		System.out.println("Ngày sinh: " + ngaySinh);
+		System.out.println("Giới tính: " + gioiTinh);
+		System.out.println("Số điện thoại: " + soDienThoai);
+		System.out.println("Địa chỉ: " + diaChiCuTru);
+		System.out.println("Email: " + email);
+		System.out.println("Trường: " + truong);
+		System.out.println("Lớp: " + lop);
+	}
+}
