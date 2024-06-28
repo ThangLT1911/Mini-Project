@@ -1,17 +1,28 @@
 package main;
 
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
+import dao.ChiTietDonHangDAO;
+import dao.KhachHangDAO;
+import dao.ShipperDAO;
 import dao.ThongTinGiaoHangDAO;
 import dao.XuLyThanhToanDAO;
 import dao.XuLyThongTinDonHangDAO;
+import database.Database;
+import entity.ChiTietDonHang;
+import entity.KhachHang;
+import entity.Shipper;
 import entity.ThongTinGiaoHang;
 
 public class Main {
-	static ThongTinGiaoHangDAO thongTinGiaoHangDAO = new ThongTinGiaoHangDAO();
+	private static ShipperDAO shipperDAO = new ShipperDAO();
+	private static ThongTinGiaoHangDAO thongTinGiaoHangDAO = new ThongTinGiaoHangDAO();
 	private static XuLyThongTinDonHangDAO xuLyThongTinDonHangDAO = new XuLyThongTinDonHangDAO();
 	private static XuLyThanhToanDAO xuLyThanhToanDAO = new XuLyThanhToanDAO();
 	private static Scanner sc = new Scanner(System.in);
@@ -34,11 +45,13 @@ public class Main {
 			sc.nextLine();
 			switch (choice) {
 			case 1:
+				QuanLyShipper();
 				break;
 			case 2:
+				quanLyKhachHang();
 				break;
 			case 3:
-				QuanLyThongTinGiaoHang();
+				quanLyThongTinGiaoHang();
 				break;
 			case 4:
 				xuLyThongTinDonHang();
@@ -46,6 +59,7 @@ public class Main {
 			case 5:
 				break;
 			case 6:
+				quanLyChiTietDonHang();
 				break;
 			case 7:
 				xuLyThanhToan();
@@ -59,7 +73,195 @@ public class Main {
 		}
 	}
 
-	private static void QuanLyThongTinGiaoHang() {
+	private static void QuanLyShipper() {
+		while (true) {
+			System.out.println("------------------------------------------------------");
+			System.out.println("1. Đăng kí thông tin shipper");
+			System.out.println("2. Cập nhật thông tin shipper");
+			System.out.println("3. Hiển thị toàn bộ thông tin shipper");
+			System.out.println("4. Lấy thông tin shipper theo mã shipper");
+			System.out.println("5. Xoá thông tin shipper");
+			System.out.println("6. ");
+			System.out.println("0. Thoát chương trình");
+			System.out.print("Nhập lựa chọn: ");
+			int choice = sc.nextInt();
+			sc.nextLine();
+			switch (choice) {
+			case 1:
+				insertShipper();
+				break;
+			case 2:
+				updateShipper();
+				break;
+			case 3:
+				selectAllShipper();
+				break;
+			case 4:
+				selectShipperByID();
+				break;
+			case 5:
+				deleteShipper();
+				break;
+			case 6:
+
+				break;
+			case 0:
+				System.out.println("Bạn đã thoát chương trình!");
+				return;
+			default:
+				System.out.println("Chức năng không hợp lệ.");
+			}
+		}
+	}
+
+	private static void insertShipper() {
+		Shipper insertedShipper = new Shipper();
+		System.out.print("Nhập mã shipper: ");
+		insertedShipper.setMaShipper(sc.nextLine());
+		System.out.print("Nhập họ tên Shipper: ");
+		insertedShipper.setHoTen(sc.nextLine());
+		System.out.print("Nhập ngày sinh shipper (YYYY-MM-DD): ");
+		insertedShipper.setNgaySinh(Date.valueOf(sc.nextLine()));
+		System.out.print("Nhập giới tính shipper: ");
+		insertedShipper.setGioiTinh(sc.nextLine());
+		System.out.print("Nhập số điện thoại shipper: ");
+		insertedShipper.setSoDienThoai(sc.nextLine());
+		System.out.print("Nhập địa chỉ shipper: ");
+		insertedShipper.setDiaChiCuTru(sc.nextLine());
+		System.out.print("Nhập email shipper: ");
+		insertedShipper.setEmail(sc.nextLine());
+		System.out.print("Nhập trường: ");
+		insertedShipper.setTruong(sc.nextLine());
+		System.out.print("Nhập lớp: ");
+		insertedShipper.setLop(sc.nextLine());
+
+		ShipperDAO.insertShipper(insertedShipper);
+	}
+
+	private static void updateShipper() {
+		Shipper updatedShipper = new Shipper();
+		System.out.print("Nhập mã của shipper cần cập nhật: ");
+		updatedShipper.setMaShipper(sc.nextLine());
+
+		System.out.print("Nhập họ tên của shipper: ");
+		updatedShipper.setHoTen(sc.nextLine());
+
+		System.out.print("Nhập ngày sinh của shipper (YYYY-MM-DD): ");
+		updatedShipper.setNgaySinh(Date.valueOf(sc.nextLine()));
+
+		System.out.print("Nhập giới tính của shipper: ");
+		updatedShipper.setGioiTinh(sc.nextLine());
+
+		System.out.print("Nhập SĐT của shipper: ");
+		updatedShipper.setSoDienThoai(sc.nextLine());
+
+		System.out.print("Nhập địa chỉ của shipper: ");
+		updatedShipper.setDiaChiCuTru(sc.nextLine());
+
+		System.out.print("Nhập email của shipper: ");
+		updatedShipper.setEmail(sc.nextLine());
+
+		System.out.print("Nhập trường học của shipper: ");
+		updatedShipper.setTruong(sc.nextLine());
+
+		System.out.print("Nhập lớp học của shipper: ");
+		updatedShipper.setLop(sc.nextLine());
+
+		shipperDAO.validateShipper(updatedShipper);
+		ShipperDAO.updateShipper(updatedShipper);
+	}
+
+	private static void selectAllShipper() {
+		ShipperDAO.selectShipper();
+	}
+
+	private static void selectShipperByID() {
+		ShipperDAO.selectShipperByID();
+	}
+
+	private static void deleteShipper() {
+		Shipper deleteShipper = new Shipper();
+		System.out.print("Nhập mã của shipper cần xoá: ");
+		deleteShipper.setMaShipper(sc.nextLine());
+		ShipperDAO.deleteShipper(deleteShipper);
+	}
+
+	private static void quanLyKhachHang() {
+		while (true) {
+			System.out.println("1.Thêm khách hàng");
+			System.out.println("2.Chọn khách hàng theo mã khách hàng");
+			System.out.println("3.Chọn tất cả khách hàng");
+			System.out.println("4.Cập nhật thông tin khách hàng theo mã khách hàng");
+			System.out.println("5.Xóa khách hàng");
+			System.out.println("6.Tìm shipper có nhiều đơn hàng thành công nhất trong quý I/2024");
+			System.out.println("Xin mời chọn");
+			int choice = sc.nextInt();
+			sc.nextLine();
+			switch (choice) {
+			case 1:
+				addKhachHang();
+				break;
+			case 2:
+				getKhachHang();
+				break;
+			case 3:
+				getAllKhachHang();
+				break;
+			case 4:
+				updateKhachHang();
+				break;
+			case 5:
+				deleteKhachHang();
+				break;
+			case 6:
+				selectFirstquarter();
+				break;
+			case 7:
+				System.out.println("Thoát chương trình.");
+				return;
+			default:
+				System.out.println("Lựa chọn không hợp lệ. Vui lòng thử lại.");
+				break;
+			}
+		}
+	}
+
+	public static void addKhachHang() {
+		KhachHang khachhang = new KhachHang();
+		System.out.println("Nhập mã khách hàng:");
+		khachhang.setMaKH(sc.nextLine());
+		System.out.println("Nhập tên khách hàng:");
+		khachhang.setTenKH(sc.nextLine());
+		System.out.println("Giới tính: ");
+		khachhang.setGioiTinh(sc.nextLine());
+		System.out.println("Địa chỉ: ");
+		khachhang.setDiaChi(sc.nextLine());
+		System.out.println("Số điện thoại: ");
+		khachhang.setSoDienThoai(sc.nextLine());
+		KhachHangDAO.addKhachHang(khachhang);
+	}
+
+	public static void getKhachHang() {
+		KhachHangDAO.getKhachHang();
+	}
+
+	public static void getAllKhachHang() {
+		KhachHangDAO.getAllKhachHang();
+	}
+
+	private static void updateKhachHang() {
+		KhachHangDAO.updateKhachHang();
+	}
+
+	public static void deleteKhachHang() {
+		KhachHangDAO.deleteKhachHang();
+	}
+
+	public static void selectFirstquarter() {
+		KhachHangDAO.selectFirstquarter();
+	}
+
+	private static void quanLyThongTinGiaoHang() {
 		while (true) {
 			System.out.println("------------------------------------------------------");
 			System.out.println("1. Thêm thông tin giao hàng");
@@ -174,9 +376,13 @@ public class Main {
 
 	private static void lietKeShipperNu() {
 		List<String> nuShippers = thongTinGiaoHangDAO.lietKeShipperNu();
-		System.out.println("Danh sách shipper nữ có ít nhất 1 đơn hàng trong tháng 2/2024:");
-		for (String shipper : nuShippers) {
-			System.out.println(shipper);
+		if (!nuShippers.isEmpty()) {
+			System.out.println("Danh sách shipper nữ có ít nhất 1 đơn hàng trong tháng 2/2024:");
+			for (String shipper : nuShippers) {
+				System.out.println(shipper);
+			}
+		} else {
+			System.out.println("Không có shipper nữ nào giao hàng trong tháng 2/2024");
 		}
 	}
 
@@ -264,6 +470,132 @@ public class Main {
 			default:
 				System.out.println("Chức năng không hợp lệ.");
 			}
+		}
+	}
+
+	public static void quanLyChiTietDonHang() {
+		Connection conn = null;
+		conn = Database.connectDB();
+		while (true) {
+			System.out.println(
+					"Chào mừng bạn đến với chương trình quản lý giao hàng nhanh \n Các chức năng trong chi tiết đơn hàng.");
+			System.out.println("1. Thêm thông tin chi tiết đơn hàng.");
+			System.out.println("2. Chỉnh sửa thông tin đơn hàng.");
+			System.out.println("3. Xoá thông tin chi tiết đơn hàng. ");
+			System.out.println(
+					"4. Liệt kê các shipper chưa nhận ship được đơn nào trong khoảng thời gian từ 1/1/2024 ~ 31/5/2024.");
+			System.out.println("5. Thoát chương trình.");
+			System.out.println("Xin mời chọn.");
+			int luaChon = sc.nextInt();
+			sc.nextLine();
+			switch (luaChon) {
+			case 1:
+				themThongTinDonHang();
+				break;
+			case 2:
+				chinhSuaThongTinDonHang();
+				break;
+			case 3:
+				xoaThongTinChiTietDonHang();
+				break;
+			case 4:
+				lietKeShipperChuaNhanShip();
+				break;
+			case 5:
+				System.out.println("Thoát chương trình.");
+				closeConnection(conn);
+				return;
+			default:
+				System.out.println("Lựa chọn không hợp lệ. Vui lòng thử lại.");
+				System.out.println("--------------------");
+				break;
+			}
+		}
+	}
+
+	private static void closeConnection(Connection conn) {
+		if (conn != null) {
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	public static void themThongTinDonHang() {
+		try {
+			ChiTietDonHang chiTietDonHang = new ChiTietDonHang();
+			chiTietDonHang.inputThongTin();
+			ChiTietDonHangDAO.insertChiTietDonHang(chiTietDonHang);
+			System.out.println("Thêm thông tin chi tiết đơn hàng thành công..");
+			System.out.println("--------------------");
+		} catch (IllegalArgumentException e) {
+			System.out.println("Lỗi: " + e.getMessage());
+		}
+	}
+
+	public static void chinhSuaThongTinDonHang() {
+		System.out.print("Nhập mã đơn hàng cần chỉnh sửa: ");
+		String maGiaoHang = sc.nextLine();
+		ChiTietDonHang chiTietDonHang = ChiTietDonHangDAO.getChiTietDonHang(maGiaoHang);
+		if (chiTietDonHang == null) {
+			System.out.println("Không tìm thấy đơn hàng có mã " + maGiaoHang);
+			return;
+		}
+		String tenDonHangMoi = "";
+		int soLuongHangMoi = 0;
+		String loaiHangMoi = "";
+		try {
+			System.out.print("Nhập tên đơn hàng mới: ");
+			tenDonHangMoi = sc.nextLine();
+			System.out.print("Nhập số lượng hàng mới: ");
+			soLuongHangMoi = sc.nextInt();
+			sc.nextLine();
+			System.out.print("Nhập loại hàng mới: ");
+			loaiHangMoi = sc.nextLine();
+		} catch (InputMismatchException e) {
+			System.out.println("Lỗi: Số lượng hàng phải là một số nguyên.");
+			sc.nextLine();
+			return;
+		}
+		chiTietDonHang.setSoLuongHang(soLuongHangMoi);
+		chiTietDonHang.setLoaiHang(loaiHangMoi);
+		chiTietDonHang.setTenDonHang(tenDonHangMoi);
+		ChiTietDonHangDAO.updateChiTietDonHang(chiTietDonHang);
+		System.out.println("--------------------");
+	}
+
+	public static void xoaThongTinChiTietDonHang() {
+		System.out.print("Nhập mã giao hàng cần xóa: ");
+		String maGiaoHang = sc.nextLine();
+		System.out.print("Nhập tên đơn hàng cần xóa: ");
+		String tenDonHang = sc.nextLine();
+		ChiTietDonHangDAO.deleteChiTietDonHang(maGiaoHang, tenDonHang);
+		System.out.println("--------------------");
+	}
+
+	public static void lietKeShipperChuaNhanShip() {
+		String ngayBatDauStr = "2024-01-01";
+		String ngayKetThucStr = "2024-05-31";
+		try {
+			List<Shipper> shippers = ShipperDAO.getShipperKhongGiaoHang(ngayBatDauStr, ngayKetThucStr);
+			if (shippers.isEmpty()) {
+				System.out.println("Không có shipper nào chưa nhận ship trong khoảng thời gian đã cho.");
+			} else {
+				System.out.println("Danh sách các shipper chưa nhận ship trong khoảng thời gian từ " + ngayBatDauStr
+						+ " đến " + ngayKetThucStr + ":");
+				for (Shipper shipper : shippers) {
+					shipper.showInfor();
+					System.out.println("--------------------");
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			System.out.println("Lỗi: " + e.getMessage());
+		} catch (Exception e) {
+			System.out.println("Đã xảy ra lỗi: " + e.getMessage());
+			e.printStackTrace();
 		}
 	}
 
